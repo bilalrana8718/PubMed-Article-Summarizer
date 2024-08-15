@@ -5,11 +5,50 @@ import re
 from PyPDF2 import PdfReader
 import docx
 from PIL import Image
+import google.generativeai as genai
+import os
+
+
+genai.configure(api_key=os.getenv("GEM_KEY"))
+
+# Your API key and Programmable Search Engine ID
+api_key = 'AIzaSyBDNFet0sGeuVEub-iTWjNEyyNhSGIpB50'
+cse_id = '74a9c6ca4ecd7403c'
+
+
+generation_config = {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "top_k": 50,
+    "max_output_tokens": 1024
+}
+
+model = genai.GenerativeModel(
+    "gemini-1.5-flash",
+    generation_config=generation_config
+)
 
 def preprocess(text):
     text = re.sub(r'\W', ' ', text)
     text = text.lower()
     return text
+
+def chunk_text(text, max_length=1024):
+    words = text.split()
+    chunks = []
+    chunk = []
+    length = 0
+    for word in words:
+        length += len(word) + 1  # +1 for space
+        if length > max_length:
+            chunks.append(" ".join(chunk))
+            chunk = [word]
+            length = len(word) + 1
+        else:
+            chunk.append(word)
+    if chunk:
+        chunks.append(" ".join(chunk))
+    return chunks
 
 @st.cache_resource
 def load_summarizer():
@@ -19,8 +58,14 @@ def load_summarizer():
 summarizer = load_summarizer()
 
 def summarize(text):
-    summary = summarizer(text, max_length=394, min_length=30, do_sample=False, clean_up_tokenization_spaces=True)
-    return summary[0]['summary_text']
+    chunks = chunk_text(text)
+    summaries = []
+    for chunk in chunks:
+        summary = summarizer(chunk,max_length=60, do_sample=False, clean_up_tokenization_spaces=True)
+        summaries.append(summary[0]['summary_text'])
+    final_summary = " ".join(summaries)
+    return final_summary
+
 
 @st.cache_data
 def load_data():
