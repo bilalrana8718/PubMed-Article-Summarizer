@@ -24,3 +24,12 @@ The PubMed Article Summarizer is a web application built with Streamlit that all
    ```bash
    git clone https://github.com/bilalrana8718/PubMed-Article-Summarizer
    cd PubMed-Article-Summarizer
+
+
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+   pip install -r requirements.txt
+
+   streamlit run AKDD.py
+
