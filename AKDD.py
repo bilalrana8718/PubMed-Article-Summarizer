@@ -5,28 +5,9 @@ import re
 from PyPDF2 import PdfReader
 import docx
 from PIL import Image
-import google.generativeai as genai
-import os
 
 
-genai.configure(api_key=os.getenv("GEM_KEY"))
 
-# Your API key and Programmable Search Engine ID
-api_key = 'AIzaSyBDNFet0sGeuVEub-iTWjNEyyNhSGIpB50'
-cse_id = '74a9c6ca4ecd7403c'
-
-
-generation_config = {
-    "temperature": 0.7,
-    "top_p": 0.9,
-    "top_k": 50,
-    "max_output_tokens": 1024
-}
-
-model = genai.GenerativeModel(
-    "gemini-1.5-flash",
-    generation_config=generation_config
-)
 
 def preprocess(text):
     text = re.sub(r'\W', ' ', text)
