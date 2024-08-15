@@ -1,1 +1,6 @@
 streamlit
+datasets
+transformers
+torch
+pypdf2
+python-docx
